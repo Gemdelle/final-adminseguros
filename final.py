@@ -18,8 +18,8 @@ import random
 # día del accidente. 
 # Descripción de la causa del choque.
 
-owners = {
-    '305678912': {
+original_owners = {
+    305678912: {
         'name': 'John Doe',
         'cars': [
             {
@@ -34,7 +34,7 @@ owners = {
             },
         ]
     },
-    '208765432': {
+    208765432: {
         'name': 'Jane Smith',
         'cars': [
             {
@@ -44,7 +44,7 @@ owners = {
             },
         ]
     },
-    '109876543': {
+    109876543: {
         'name': 'Bob Johnson',
         'cars': [
             {
@@ -64,7 +64,7 @@ owners = {
             },
         ]
     },
-    '124567890': {
+    124567890: {
         'name': 'Alice Brown',
         'cars': [
             {
@@ -79,7 +79,7 @@ owners = {
             },
         ]
     },
-    '345678901': {
+    345678901: {
         'name': 'Charlie Wilson',
         'cars': [
             {
@@ -99,7 +99,7 @@ owners = {
             },
         ]
     },
-    '987654321': {
+    987654321: {
         'name': 'Eva Davis',
         'cars': [
             {
@@ -124,7 +124,7 @@ owners = {
             },
         ]
     },
-    '123456789': {
+    123456789: {
         'name': 'Grace Taylor',
         'cars': [
             {
@@ -144,7 +144,7 @@ owners = {
             },
         ]
     },
-    '334455667': {
+    334455667: {
         'name': 'Samuel Rodriguez',
         'cars': [
             {
@@ -161,7 +161,7 @@ owners = {
     },
 }
 
-accidents = {
+original_accidents = {
     'ABC123': [{'accident_date': '2023-11-01', 'description': 'Minor fender bender'}],
     'XYZ789': [{'accident_date': '2023-10-15', 'description': 'Side collision at an intersection'},
                {'accident_date': '2023-09-23', 'description': 'Parking lot incident'}],
@@ -191,13 +191,13 @@ accidents = {
 }
 
 # TABLE 01 OWNERS
-def createOwnersDataBase(owners,conn):
+def createOwnersDataBase(original_owners,conn):
     cursor = conn.cursor()
     cursor.execute('''CREATE TABLE IF NOT EXISTS owners
-                        (id INTEGER,
+                        (id INTEGER PRIMARY KEY,
                         name TEXT,
                         model TEXT,
-                        plate TEXT PRIMARY KEY,
+                        plate TEXT,
                         payment_date DATE
                         )''')
 
@@ -205,7 +205,7 @@ def createOwnersDataBase(owners,conn):
     row_count = cursor.fetchone()[0]
 
     if row_count == 0:
-        for id, owner_data in owners.items():
+        for id, owner_data in original_owners.items():
             name = owner_data['name']
             
             # Check if 'cars' key exists and has at least one car
@@ -223,27 +223,27 @@ def createOwnersDataBase(owners,conn):
 
 # TABLE 02 ACCIDENTS
 
-def createAccidentsDataBase(conn):
-    cursor = conn.cursor()
-    cursor.execute('''CREATE TABLE IF NOT EXISTS accidents
-                        (plate TEXT PRIMARY KEY,
-                        accident_date DATE,
-                        description TEXT
-                        )''')
+# def createAccidentsDataBase(original_accidents,conn):
+#     cursor = conn.cursor()
+#     cursor.execute('''CREATE TABLE IF NOT EXISTS accidents
+#                         (plate TEXT PRIMARY KEY,
+#                         accident_date DATE,
+#                         description TEXT
+#                         )''')
 
-    cursor.execute("SELECT COUNT(*) FROM accidents")
-    row_count = cursor.fetchone()[0]
+#     cursor.execute("SELECT COUNT(*) FROM accidents")
+#     row_count = cursor.fetchone()[0]
 
-    if row_count == 0:
-        for plate, accidents in accidents.items():
-            for accident in accidents:
-                accident_date = accident.get('accident_date', 'Unknown Date')  # Use 'Unknown Date' if 'accident_date' is missing
-                description = accident.get('description', 'Unknown Description')  # Use 'Unknown Description' if 'description' is missing
+#     if row_count == 0:
+#         for plate, accidents in original_accidents.items():
+#             for accident in accidents:
+#                 accident_date = accident.get('accident_date', 'Unknown Date')  # Use 'Unknown Date' if 'accident_date' is missing
+#                 description = accident.get('description', 'Unknown Description')  # Use 'Unknown Description' if 'description' is missing
                 
-                cursor.execute("INSERT INTO accidents (plate, accident_date, description) VALUES (?, ?, ?)",
-                            (plate, accident_date, description))
+#                 cursor.execute("INSERT INTO accidents (plate, accident_date, description) VALUES (?, ?, ?)",
+#                             (plate, accident_date, description))
 
-    conn.commit()
+#     conn.commit()
 
 def printColumns(data, cursor):
     columns = [column[0] for column in cursor.description]
@@ -289,10 +289,10 @@ def listCars(conn):
 
 def main(): 
     # Open connection
-    conn = sqlite3.connect('library.db')
+    conn = sqlite3.connect('cars.db')
 
-    createOwnersDataBase(owners,conn)
-    createAccidentsDataBase(accidents,conn)
+    createOwnersDataBase(original_owners,conn)
+    # createAccidentsDataBase(original_accidents,conn)
 
     action = defineAction()
 
