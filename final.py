@@ -194,10 +194,10 @@ original_accidents = {
 def createOwnersDataBase(original_owners,conn):
     cursor = conn.cursor()
     cursor.execute('''CREATE TABLE IF NOT EXISTS owners
-                        (id INTEGER PRIMARY KEY,
+                        (id INTEGER,
                         name TEXT,
                         model TEXT,
-                        plate TEXT,
+                        plate TEXT PRIMARY KEY,
                         payment_date DATE
                         )''')
 
@@ -223,27 +223,27 @@ def createOwnersDataBase(original_owners,conn):
 
 # TABLE 02 ACCIDENTS
 
-# def createAccidentsDataBase(original_accidents,conn):
-#     cursor = conn.cursor()
-#     cursor.execute('''CREATE TABLE IF NOT EXISTS accidents
-#                         (plate TEXT PRIMARY KEY,
-#                         accident_date DATE,
-#                         description TEXT
-#                         )''')
+def createAccidentsDataBase(original_accidents,conn):
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS accidents
+                        (plate TEXT,
+                        accident_date DATE,
+                        description TEXT
+                        )''')
 
-#     cursor.execute("SELECT COUNT(*) FROM accidents")
-#     row_count = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM accidents")
+    row_count = cursor.fetchone()[0]
 
-#     if row_count == 0:
-#         for plate, accidents in original_accidents.items():
-#             for accident in accidents:
-#                 accident_date = accident.get('accident_date', 'Unknown Date')  # Use 'Unknown Date' if 'accident_date' is missing
-#                 description = accident.get('description', 'Unknown Description')  # Use 'Unknown Description' if 'description' is missing
+    if row_count == 0:
+        for plate, accidents in original_accidents.items():
+            for accident in accidents:
+                accident_date = accident.get('accident_date', 'Unknown Date')  # Use 'Unknown Date' if 'accident_date' is missing
+                description = accident.get('description', 'Unknown Description')  # Use 'Unknown Description' if 'description' is missing
                 
-#                 cursor.execute("INSERT INTO accidents (plate, accident_date, description) VALUES (?, ?, ?)",
-#                             (plate, accident_date, description))
+                cursor.execute("INSERT INTO accidents (plate, accident_date, description) VALUES (?, ?, ?)",
+                            (plate, accident_date, description))
 
-#     conn.commit()
+    conn.commit()
 
 def printColumns(data, cursor):
     columns = [column[0] for column in cursor.description]
